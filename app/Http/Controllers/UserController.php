@@ -45,4 +45,61 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+    public function login(Request $request)
+    {
+        try {
+            $credentials = $request->only('email', 'password');
+
+            if (!$token = JWTAuth::attempt($credentials)) {
+                return response()->json(['message' => 'Invalid credentials'], 401);
+            }
+
+            return response()->json([
+                'message' => 'Login successful',
+                'token' => $token
+            ], 200);
+        } catch (Exception $e) {
+            Log::error('Login error: ' . $e->getMessage() . ' | ' . $e->getFile() . ':' . $e->getLine());
+            return response()->json([
+                'message' => 'Failed to login',
+                'error' => $e->getMessage() ?: 'An error occurred'
+            ], 500);
+        }
+    }
+
+    public function showalluser()
+    {
+        try {
+            $user = User::all();
+            return response()->json([
+                'message' => 'all user retrieved successfully',
+                'data' => $user
+            ], 200);
+        } catch (Exception $e) {
+            Log::error('User retrieval error: ' . $e->getMessage() . ' | ' . $e->getFile() . ':' . $e->getLine());
+            return response()->json([
+                'message' => 'Failed to retrieve user',
+                'error' => $e->getMessage() ?: 'An error occurred'
+            ], 500);
+        }
+    }
+
+    public function showuserbyid(Request $request)
+    {
+        try {
+            $id = $request->id;
+            $user = User::findOrFail($id);
+            return response()->json([
+                'message' => 'user retrieved successfully',
+                'data' => $user
+            ], 200);
+        } catch (Exception $e) {
+            Log::error('User retrieval error: ' . $e->getMessage() . ' | ' . $e->getFile() . ':' . $e->getLine());
+            return response()->json([
+                'message' => 'Failed to retrieve user',
+                'error' => $e->getMessage() ?: 'An error occurred'
+            ], 500);
+        }
+    }
 }
