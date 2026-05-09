@@ -57,6 +57,7 @@ class UserController extends Controller
 
             return response()->json([
                 'message' => 'Login successful',
+                "data" => JWTAuth::user(),
                 'token' => $token
             ], 200);
         } catch (Exception $e) {
@@ -68,9 +69,26 @@ class UserController extends Controller
         }
     }
 
-    public function showalluser()
+    public function showalluser(Request $request)
     {
         try {
+            $id = $request->query('id');
+
+            if ($id !== null) {
+                $user = User::find($id);
+
+                if (!$user) {
+                    return response()->json([
+                        'message' => 'User not found'
+                    ], 404);
+                }
+
+                return response()->json([
+                    'message' => 'user retrieved successfully',
+                    'data' => $user
+                ], 200);
+            }
+
             $user = User::all();
             return response()->json([
                 'message' => 'all user retrieved successfully',
@@ -85,20 +103,44 @@ class UserController extends Controller
         }
     }
 
-    public function showuserbyid(Request $request)
+    public function editUser(Request $request)
     {
         try {
-            $id = $request->id;
-            $user = User::findOrFail($id);
+            $id = $request->query('id');
+            $request->validate([
+                'first_name' => 'sometimes|required|string|max:50',
+                'last_name' => 'sometimes|required|string|max:50',
+                'email' => 'sometimes|required|email|max:255|unique:users,email,' . $id,
+                'password' => 'sometimes|required|string|min:8',
+            ]);
+
+            
+            $user = User::find($id);
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'User not found'
+                ], 404);
+            }
+
+            $data = $request->only('first_name', 'last_name', 'email', 'password');
+
+            if (isset($data['password'])) {
+                $data['password'] = Hash::make($data['password']);
+            }
+
+            $user->update($data);
+
             return response()->json([
-                'message' => 'user retrieved successfully',
+                'message' => 'User updated successfully',
                 'data' => $user
             ], 200);
         } catch (Exception $e) {
-            Log::error('User retrieval error: ' . $e->getMessage() . ' | ' . $e->getFile() . ':' . $e->getLine());
+            Log::error('User update error: ' . $e->getMessage());
+
             return response()->json([
-                'message' => 'Failed to retrieve user',
-                'error' => $e->getMessage() ?: 'An error occurred'
+                'message' => 'Failed to update user',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
