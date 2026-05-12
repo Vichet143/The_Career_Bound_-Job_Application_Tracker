@@ -38,7 +38,6 @@ class UserController extends Controller
                 'token' => $token
             ], 201);
         } catch (Exception $e) {
-            Log::error('User creation error: ' . $e->getMessage() . ' | ' . $e->getFile() . ':' . $e->getLine());
             return response()->json([
                 'message' => 'Failed to create user',
                 'error' => $e->getMessage() ?: 'An error occurred'
