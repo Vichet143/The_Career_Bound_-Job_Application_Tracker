@@ -4,6 +4,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\GenerateCvController;
 
 // user registration and login routes
 Route::post('/register', [UserController::class, 'store'])->name('api.register');
@@ -19,3 +20,6 @@ Route::post('/reset_password', [ForgotPasswordController::class, 'reset'])->name
 Route::post('/template', [TemplateController::class, 'createTemplate'])->name('api.templates.create');
 Route::get('/template', [TemplateController::class, 'getTemplates'])->name('api.templates');
 Route::put('/updatetemplate', [TemplateController::class, 'updateTemplate'])->name('api.template.update');
+
+// Generate CV routes
+Route::apiResource('generatecv', GenerateCvController::class);
