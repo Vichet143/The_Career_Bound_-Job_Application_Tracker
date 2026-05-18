@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\GenerateCvController;
+use App\Http\Controllers\ApplicationController;
 
 // user registration and login routes
 Route::post('/register', [UserController::class, 'store'])->name('api.register');
@@ -23,3 +24,11 @@ Route::put('/updatetemplate', [TemplateController::class, 'updateTemplate'])->na
 
 // Generate CV routes
 Route::apiResource('generatecv', GenerateCvController::class);
+
+// Applications routes (with authentication)
+Route::middleware('auth:api')->group(function () {
+  Route::post('/applications', [ApplicationController::class, 'store'])->name('api.applications.store');
+  Route::get('/applications', [ApplicationController::class, 'show'])->name('api.applications.show');
+  Route::put('/applications', [ApplicationController::class, 'update'])->name('api.applications.update');
+  Route::delete('/applications', [ApplicationController::class, 'destroy'])->name('api.applications.destroy');
+});
