@@ -22,8 +22,13 @@ Route::post('/template', [TemplateController::class, 'createTemplate'])->name('a
 Route::get('/template', [TemplateController::class, 'getTemplates'])->name('api.templates');
 Route::put('/updatetemplate', [TemplateController::class, 'updateTemplate'])->name('api.template.update');
 
-// Generate CV routes
-Route::apiResource('generatecv', GenerateCvController::class);
+// Generate CV routes (with authentication)
+Route::middleware('auth:api')->group(function () {
+    Route::post('/generatecv', [GenerateCvController::class, 'store'])->name('api.generatecv.store');
+    Route::get('/generatecv', [GenerateCvController::class, 'show'])->name('api.generatecv.show');
+    Route::put('/generatecv', [GenerateCvController::class, 'update'])->name('api.generatecv.update');
+    Route::delete('/generatecv', [GenerateCvController::class, 'destroy'])->name('api.generatecv.destroy');
+});
 
 // Applications routes (with authentication)
 Route::middleware('auth:api')->group(function () {
