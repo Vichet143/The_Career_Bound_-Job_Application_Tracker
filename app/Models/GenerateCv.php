@@ -5,7 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class GenerateCv extends Model
-{
+{   
+    protected $table = 'generate_cvs';
     protected $primaryKey = 'generatecv_id';
     protected $fillable = [
         'user_id',
