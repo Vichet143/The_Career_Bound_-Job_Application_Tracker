@@ -18,22 +18,26 @@ class ApplicationController extends Controller
     {
         try {
             $request->validate([
+                'generatecv_id' => 'required|integer', // FIXED: Replaced template_name
                 'company_name' => 'required|string|max:255',
                 'job_title' => 'required|string|max:255',
                 'application_date' => 'nullable|date',
                 'application_note' => 'nullable|string',
-                'template_name' => 'required|string|max:255',
+                // 'template_name' => 'required|string|max:255',
+                'status' => 'required|in:applied,interview,rejected,offer', // FIXED: Added status
             ]);
 
             $user = Auth::user();
 
             $application = Application::create([
                 'user_id' => $user->user_id,
+                'generatecv_id' => $request->generatecv_id, // FIXED: Replaced template_name
                 'company_name' => $request->company_name,
                 'job_title' => $request->job_title,
                 'application_date' => $request->application_date,
                 'application_note' => $request->application_note,
-                'template_name' => $request->template_name,
+                // 'template_name' => $request->template_name,
+                'status' => $request->status, // FIXED: Added status
             ]);
             return response()->json(['message' => 'Application created successfully', 'application' => $application], 201);
         } catch (\Exception $e) {
@@ -85,14 +89,17 @@ class ApplicationController extends Controller
             }
 
             $request->validate([
+                'generatecv_id' => 'sometimes|required|integer', // FIXED
                 'company_name' => 'sometimes|required|string|max:255',
                 'job_title' => 'sometimes|required|string|max:255',
                 'application_date' => 'nullable|date',
                 'application_note' => 'nullable|string',
-                'template_name' => 'sometimes|required|string|max:255',
+                // 'template_name' => 'sometimes|required|string|max:255',
+                'status' => 'sometimes|required|in:applied,interview,rejected,offer', // FIXED
             ]);
 
-            $data = $request->only('company_name', 'job_title', 'application_date', 'application_note', 'template_name');
+            // FIXED: Updated the list of allowed fields
+            $data = $request->only('generatecv_id','company_name', 'job_title', 'application_date', 'application_note', 'status');
             $application->update($data);
 
             return response()->json(['message' => 'Application updated successfully', 'application' => $application], 200);
