@@ -11,14 +11,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('application', function (Blueprint $table) {
+        // FIXED: Renamed 'application' to 'applications'
+        Schema::create('applications', function (Blueprint $table) {
             $table->id("application_id");
+
+            // FIXED: Created the column before making it a foreign key
+            $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
+            
+            // FIXED: Added generatecv_id to link to the CV
+            $table->unsignedBigInteger('generatecv_id'); 
+
             $table->string("company_name");
             $table->string("job_title");
-            $table->text("application_date")->nullable();
+
+            // FIXED: Changed text to date
+            $table->date("application_date")->nullable();
             $table->text("application_note")->nullable();
-            $table->string("template_name");
+            // $table->string("template_name");
+
+            // FIXED: Added the status column
+            $table->enum('status', ['applied', 'interview', 'rejected', 'offer'])->default('applied');
+
             $table->timestamps();
         });
     }
@@ -28,6 +42,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('application');
+        // FIXED: Renamed to 'applications'
+        Schema::dropIfExists('applications');
     }
 };

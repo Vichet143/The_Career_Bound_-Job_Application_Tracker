@@ -6,15 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Application extends Model
 {
-    protected $table = 'application';
+    // FIXED: Changed to plural 'applications'
+    protected $table = 'applications';
     protected $primaryKey = 'application_id';
     protected $fillable = [
         'user_id',
+        'generatecv_id',     // FIXED: Replaced template_name with generatecv_id
         'company_name',
         'job_title',
         'application_date',
         'application_note',
-        'template_name',
+        // 'template_name',
+        'status',            // FIXED: Added status
     ];
 
     public function user()
